@@ -3,9 +3,13 @@
 # 2020-06-22 - slg - customized
 # 2020-06-27 - slg - expanded to G++ for MacOS
 # 2020-07-03 - slg - ported to be13_api; removed python (be13_api doesn't use python)
+# 2021-02-23 - ml - changed workflow triggers
 
 name: BE13_API CI (c++14)
-on: [push]
+on:
+  push:
+    branches: master
+  workflow_dispatch:
 
 jobs:
   build:
