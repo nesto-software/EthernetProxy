@@ -74,13 +74,15 @@ case $host in
      ;;
 esac
 
+#CPPFLAGS="-I/usr/local/include/boost $CPPFLAGS"
+
 if test x"${mingw}" == "xno" ; then
   # Bring additional directories where things might be found into our
   # search path. I don't know why autoconf doesn't do this by default
-  for spfx in /usr/local /opt/local /sw /usr/local/ssl /usr/boost/include ; do
+  for spfx in /usr/local /opt/local /sw /usr/local/ssl /usr/local/boost ; do
     AC_MSG_NOTICE([checking ${spfx}/include])
     if test -d ${spfx}/include; then
-        CPPFLAGS="-I${spfx}/include $CPPFLAGS"
+        #CPPFLAGS="-I${spfx}/include $CPPFLAGS"
         LDFLAGS="-L${spfx}/lib $LDFLAGS"
         AC_MSG_NOTICE([ *** ADDING ${spfx}/include to CPPFLAGS *** ])
         AC_MSG_NOTICE([ *** ADDING ${spfx}/lib to LDFLAGS *** ])
