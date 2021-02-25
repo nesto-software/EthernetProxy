@@ -13,11 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ['ubuntu-20.04']
-
+    runs-on: 'ubuntu-20.04'
     steps:
       # https://github.com/actions/checkout
       - name: Checkout
@@ -25,18 +21,16 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install C++ dependencies on MacOS
-        if: startsWith(matrix.os, 'macOS')
-        run: |
-           bash etc/install_autotools.sh
-
       - name: Install C++ dependencies on Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
         run: |
            sudo apt install libtool autoconf automake g++ libboost-all-dev libssl-dev libpcap-dev libcairo2-dev
            automake --help
 
-      - name: c/c++ test
+      - name: Build the executable
         run: |
           bash bootstrap.sh
-          ./configure && make && make check
+          ./configure && make
+
+      - name: Run tests
+        run: |
+          make check
