@@ -70,11 +70,11 @@ case $host in
      ;;
 
    *)
-     CXXFLAGS="$CXXFLAGS -Wno-address-of-packed-member"
+     CXXFLAGS="$CXXFLAGS -Wno-address-of-packed-member -fno-new-ttp-matching"
      ;;
 esac
 
-#CPPFLAGS="-I/usr/local/include/boost $CPPFLAGS"
+LDFLAGS="-L/usr/lib $LDFLAGS"
 
 if test x"${mingw}" == "xno" ; then
   # Bring additional directories where things might be found into our
@@ -82,8 +82,8 @@ if test x"${mingw}" == "xno" ; then
   for spfx in /usr/local /opt/local /sw /usr/local/ssl /usr/local/boost ; do
     AC_MSG_NOTICE([checking ${spfx}/include])
     if test -d ${spfx}/include; then
-        #CPPFLAGS="-I${spfx}/include $CPPFLAGS"
-        LDFLAGS="-L${spfx}/lib $LDFLAGS"
+        CPPFLAGS="-I${spfx}/include $CPPFLAGS"
+        LDFLAGS="$LDFLAGS -L${spfx}/lib"
         AC_MSG_NOTICE([ *** ADDING ${spfx}/include to CPPFLAGS *** ])
         AC_MSG_NOTICE([ *** ADDING ${spfx}/lib to LDFLAGS *** ])
     fi
