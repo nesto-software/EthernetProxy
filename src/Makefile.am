@@ -1,5 +1,5 @@
 # Programs that we compile:
-bin_PROGRAMS = tcpflow
+bin_PROGRAMS = tcpflow tcpflow_gg
 
 if WIFI_ENABLED
 WIFI_INCS = -I${top_srcdir}/src/wifipcap
@@ -88,6 +88,25 @@ tcpflow_SOURCES = \
 	$(DFXML_WRITER) $(NETVIZ) $(BE13_API) $(WIFI_FILES) \
 	datalink.cpp flow.cpp \
 	tcpflow.cpp \
+	tcpip.h tcpip.cpp \
+	tcpdemux.h tcpdemux.cpp \
+	intrusive_list.h \
+	tcpflow.h util.cpp \
+	scan_md5.cpp \
+	scan_http.cpp \
+	scan_tcpdemux.cpp \
+	scan_netviz.cpp \
+	pcap_writer.h \
+	iptree.h \
+	http-parser/http_parser.c \
+	http-parser/http_parser.h \
+	mime_map.cpp \
+	mime_map.h
+
+tcpflow_gg_SOURCES = \
+	$(DFXML_WRITER) $(NETVIZ) $(BE13_API) $(WIFI_FILES) \
+	datalink.cpp flow.cpp \
+	tcpflow-gg.cpp \
 	tcpip.h tcpip.cpp \
 	tcpdemux.h tcpdemux.cpp \
 	intrusive_list.h \

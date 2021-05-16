@@ -103,8 +103,9 @@ public:
                   max_flows(0),suppress_header(0),
                   output_strip_nonprint(true),output_json(false),
                   output_pcap(false),output_hex(false),use_color(0),
-                  output_packet_index(false),max_seek(MAX_SEEK) {
+                  output_packet_index(false),max_seek(MAX_SEEK),zmq_enabled(false) {
         }
+        bool    zmq_enabled;
         bool    console_output;
         bool    console_output_nonewline;
         bool    store_output;   // do we output?

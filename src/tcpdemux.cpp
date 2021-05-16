@@ -632,25 +632,28 @@ int tcpdemux::process_tcp(const ipaddr &src, const ipaddr &dst,sa_family_t famil
      * since they both have no data by definition.
      */
     if (tcp_datalen>0){
-	if (opt.console_output) {
-	    tcp->print_packet(tcp_data, tcp_datalen);
-	} else {
-	    if (opt.store_output){
-		bool new_file = false;
-		if (tcp->fd < 0) new_file = true;
+        if (opt.zmq_enabled) {
+            // printf("test");
+            tcp->print_packet(tcp_data, tcp_datalen);
+        } else if (opt.console_output) {
+            tcp->print_packet(tcp_data, tcp_datalen);
+        } else {
+            if (opt.store_output) {
+                bool new_file = false;
+                if (tcp->fd < 0) new_file = true;
 
-		tcp->store_packet(tcp_data, tcp_datalen, delta,pi.ts);
+                tcp->store_packet(tcp_data, tcp_datalen, delta,pi.ts);
 
-		if(new_file && tcp_alert_fd>=0){
-		    std::stringstream ss;
-		    ss << "open\t" << tcp->flow_pathname.c_str() << "\n";
-		    const std::string &sso = ss.str();
-		    if(write(tcp_alert_fd,sso.c_str(),sso.size())!=(int)sso.size()){
-			perror("write");
-		    }
-		}
-	    }
-	}
+                if(new_file && tcp_alert_fd>=0){
+                    std::stringstream ss;
+                    ss << "open\t" << tcp->flow_pathname.c_str() << "\n";
+                    const std::string &sso = ss.str();
+                    if (write(tcp_alert_fd,sso.c_str(),sso.size())!=(int)sso.size()){
+                        perror("write");
+                    }
+                }
+            }
+        }
     }
 
     if (rst_set){
