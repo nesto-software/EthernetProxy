@@ -8,7 +8,8 @@ if test x"${mingw}" != "xyes" ; then
        AC_MSG_NOTICE(Compiling under $host.)
        # Bring additional directories where things might be found into our
        # search path. I don't know why autoconf doesn't do this by default
-       for spfx in /usr/local /opt/local /sw /usr/local/ssl; do
+       for spfx in /usr/local /opt/local /sw /usr/local/ssl /usr/local/openssl; do
+         spfx="${STAGING_DIR}${spfx}"
          AC_MSG_NOTICE([checking ${spfx}/include])
          if test -d ${spfx}/include; then
            CPPFLAGS="$CPPFLAGS -I${spfx}/include"

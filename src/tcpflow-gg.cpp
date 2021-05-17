@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
     si.get_config("debug-prefix",&debug_prefix,"Prefix for debug output");
     init_debug(debug_prefix.c_str(),0);
 
-    DEBUG(10) ("%s version %s ", PACKAGE_NAME, PACKAGE_VERSION);
+    DEBUG(10) ("%s version %s ", PACKAGE_NAME, PACKAGE_VERSION); 
 
     //feature_file_names_t feature_file_names;
     //be13::plugin::get_scanner_feature_file_names(feature_file_names);

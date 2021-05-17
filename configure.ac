@@ -74,12 +74,13 @@ case $host in
      ;;
 esac
 
-LDFLAGS="-L/usr/lib $LDFLAGS"
+LDFLAGS="-L${STAGING_DIR}/usr/lib $LDFLAGS"
 
 if test x"${mingw}" == "xno" ; then
   # Bring additional directories where things might be found into our
   # search path. I don't know why autoconf doesn't do this by default
-  for spfx in /usr/local /opt/local /sw /usr/local/ssl /usr/local/boost ; do
+  for spfx in /usr/local /opt/local /sw /usr/local/ssl /usr/local/openssl /usr/local/boost ; do
+    spfx="${STAGING_DIR}${spfx}"
     AC_MSG_NOTICE([checking ${spfx}/include])
     if test -d ${spfx}/include; then
         CPPFLAGS="-I${spfx}/include $CPPFLAGS"
