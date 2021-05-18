@@ -12,12 +12,15 @@
  */
 
 #include "tcpflow.h"
+#include "tcpflow-gg.h"
 #include "tcpip.h"
 #include "tcpdemux.h"
+#include <cstdio>
 
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <boost/filesystem.hpp>
 
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
@@ -224,7 +227,8 @@ void tcpdemux::post_process(tcpip *tcp)
     /**
      * Before we delete the tcp structure, save information about the saved flow
      */
-    save_flow(tcp);
+    // note: we do not use this feature. we assume the flow is done at this point and open a new file
+    //save_flow(tcp);
 
     if(opt.store_output && tcp_alert_fd>=0){
 	std::stringstream ss;
@@ -233,6 +237,36 @@ void tcpdemux::post_process(tcpip *tcp)
 	if(write(tcp_alert_fd,sso.c_str(),sso.size()) != (int)sso.size()){
 	    perror("write");
 	}
+    }
+
+    if (opt.zmq_enabled) {
+        DEBUG(10) ("run post process hook");
+
+        // 0.) get meta information from flow
+        const flow this_flow = tcp->myflow;
+
+        // 1.) send the file content
+        const int BUFFERSIZE = 4096;    
+        FILE* filp = fopen(tcp->flow_pathname.c_str(), "rb" );
+
+        // filp might be NULL if RST or FIN is sent multiple times for a specific connection
+        // this is the case if you kill ncat -k from the server side (not the client side though!)
+        if (filp) {
+
+            char * buffer = new char[BUFFERSIZE];
+            int size = 0;
+            do {
+                size = fread(buffer, sizeof(char), BUFFERSIZE, filp);
+
+                if (size > 0) {
+                    send_via_zmq(buffer, size, this_flow.src.addr, this_flow.dst.addr);
+                }
+            } while ( size > 0 );
+            fclose(filp);
+            
+            // 2.) remove the file
+            boost::filesystem::remove(tcp->flow_pathname);
+        }
     }
 
     if(tcp_cmd.size()>0 && tcp->flow_pathname.size()>0){
@@ -266,7 +300,7 @@ void tcpdemux::remove_flow(const flow_addr &flow)
     flow_map_t::iterator it = flow_map.find(flow);
     if(it!=flow_map.end()){
         post_process(it->second);
-	flow_map.erase(it);
+	    flow_map.erase(it);
     }
 }
 
@@ -632,10 +666,7 @@ int tcpdemux::process_tcp(const ipaddr &src, const ipaddr &dst,sa_family_t famil
      * since they both have no data by definition.
      */
     if (tcp_datalen>0){
-        if (opt.zmq_enabled) {
-            // printf("test");
-            tcp->print_packet(tcp_data, tcp_datalen);
-        } else if (opt.console_output) {
+        if (opt.console_output) {
             tcp->print_packet(tcp_data, tcp_datalen);
         } else {
             if (opt.store_output) {

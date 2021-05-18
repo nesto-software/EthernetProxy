@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/raspberry-build/staging/**",
+                "/opt/crosstool-ng/x-tools/arm-unknown-linux-gnueabi/arm-unknown-linux-gnueabi/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

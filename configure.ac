@@ -89,6 +89,8 @@ if test x"${mingw}" == "xno" ; then
         AC_MSG_NOTICE([ *** ADDING ${spfx}/lib to LDFLAGS *** ])
     fi
   done
+  LDFLAGS="$LDFLAGS -Wl,--enable-new-dtags"
+  LIBS="-laws-greengrass-core-sdk-c -lzmq -lboost_filesystem"
   AC_MSG_NOTICE([ CPPFLAGS = ${CPPFLAGS} ])
   AC_MSG_NOTICE([ LDFLAGS = ${LDFLAGS} ])
 fi

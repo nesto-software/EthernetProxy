@@ -13,17 +13,20 @@
 #include "tcpflow.h"
 #include "tcpip.h"
 #include "tcpdemux.h"
+#include "greengrasssdk.h"
 
 #include <string>
 #include <vector>
 #include <sys/types.h>
+#include <zmq.hpp>
+#include <boost/filesystem.hpp>
+#include <msgpack.hpp>
 
-int packet_buffer_timeout = 10;
-
+int packet_buffer_timeout = 20;
 scanner_info::scanner_config be_config; // system configuration
 
 const char *progname = "tcpflow-gg";
-int debug = DEFAULT_DEBUG_LEVEL;
+int debug = 10; // DEFAULT_DEBUG_LEVEL;
 
 /* semaphore prevents multiple copies from outputing on top of each other */
 #ifdef HAVE_PTHREAD_H
@@ -36,7 +39,7 @@ scanner_t *scanners_builtin[] = { scan_tcpdemux, 0};
 bool opt_no_promisc = false;		// true if we should not use promiscious mode
 
 /* These must be global variables so they are available in the signal handler */
-//feature_recorder_set *the_fs = 0;
+feature_recorder_set *the_fs = 0;
 pcap_t *pd = 0;
 void terminate(int sig) 
 {
@@ -46,7 +49,7 @@ void terminate(int sig)
         return;
     } else {
         DEBUG(1) ("terminating");
-        // be13::plugin::phase_shutdown(*the_fs);	// give plugins a chance to do a clean shutdown
+        be13::plugin::phase_shutdown(*the_fs);	// give plugins a chance to do a clean shutdown
         exit(0); /* libpcap uses onexit to clean up */
     }
 }
@@ -171,9 +174,66 @@ static int process_infile(tcpdemux &demux,const std::string &expression,std::str
     return 0;
 }
 
-
-int main(int argc, char *argv[])
+/* be_hash. Currently this just returns the MD5 of the sbuf,
+ * but eventually it will allow the use of different hashes.
+ */
+static std::string be_hash_name("md5");
+static std::string be_hash_func(const uint8_t *buf,size_t bufsize)
 {
+    if(be_hash_name=="md5" || be_hash_name=="MD5"){
+        return md5_generator::hash_buf(buf,bufsize).hexdigest();
+    }
+    if(be_hash_name=="sha1" || be_hash_name=="SHA1" || be_hash_name=="sha-1" || be_hash_name=="SHA-1"){
+        return sha1_generator::hash_buf(buf,bufsize).hexdigest();
+    }
+    if(be_hash_name=="sha256" || be_hash_name=="SHA256" || be_hash_name=="sha-256" || be_hash_name=="SHA-256"){
+        return sha256_generator::hash_buf(buf,bufsize).hexdigest();
+    }
+    std::cerr << "Invalid hash name: " << be_hash_name << "\n";
+    std::cerr << "This version of bulk_extractor only supports MD5, SHA1, and SHA256\n";
+    exit(1);
+}
+static feature_recorder_set::hash_def be_hash(be_hash_name,be_hash_func);
+
+void handler(const gg_lambda_context *cxt) {
+    (void)cxt;
+    return;
+}
+
+zmq::context_t *ctx = new zmq::context_t();
+zmq::socket_t sock (*ctx, zmq::socket_type::pub);
+
+struct ZMQ_MSG {
+	std::vector<char> data;
+	uint8_t src[16];
+    uint8_t dst[16];
+	MSGPACK_DEFINE_MAP(data, src, dst);
+};
+
+void send_via_zmq(char *payload, int size, const uint8_t src[], const uint8_t dst[]) {
+    struct ZMQ_MSG msg;
+
+	msg.data = std::vector<char>(payload, payload + size);
+	for(int i=0;i<16;i++) {
+        msg.src[i] = src[i];
+    }
+
+    for(int i=0;i<16;i++) {
+        msg.dst[i] = dst[i];
+    }
+
+	std::stringstream buffer;
+	msgpack::pack(buffer, msg);
+	buffer.seekg(0);
+	std::string msg_str(buffer.str());
+
+	sock.send(zmq::message_t(msg_str), zmq::send_flags::dontwait); 
+}
+
+int tcpflow(std::string device, std::string expression)
+{
+    sock.bind("tcp://127.0.0.1:5678");
+
     bool opt_enable_report = false;
     const char *lockname = 0;
     tcpdemux &demux = *tcpdemux::getInstance();
@@ -197,9 +257,17 @@ int main(int argc, char *argv[])
     // demux.opt.suppress_header = 1;
     be13::plugin::scanners_disable_all();
     be13::plugin::scanners_enable("tcpdemux");
-    std::string device = std::string("lo"); 
-    demux.opt.store_output = false;
-    demux.opt.post_processing = false;
+    demux.opt.store_output = true;  // must be true in order to process out-of-order packets etc.
+    demux.opt.post_processing = true;   // we send the tcp content via zmq in post-process hook
+    
+    std::string outdir = "/ethernet-proxy";
+
+    // ensure path exists and empty it before operation
+    boost::filesystem::remove_all(outdir);
+    boost::filesystem::create_directories(outdir);
+
+    demux.outdir = outdir;
+    flow::outdir = outdir;
 
     /* Load all the scanners and enable the ones we care about */
     scanner_info si;
@@ -207,13 +275,13 @@ int main(int argc, char *argv[])
     si.get_config("enable_report",&opt_enable_report,"Enable report.xml");
     be13::plugin::load_scanners(scanners_builtin,be_config);
     be13::plugin::scanners_process_enable_disable_commands();
- 
+
     /* was a semaphore provided for the lock? */
     if(lockname){
 #if defined(HAVE_SEMAPHORE_H) && defined(HAVE_PTHREAD_H)
 	semlock = sem_open(lockname,O_CREAT,0777,1); // get the semaphore
 #else
-	fprintf(stderr,"%s: attempt to create lock pthreads not present\n",argv[0]);
+	fprintf(stderr,"attempt to create lock pthreads not present\n");
 	exit(1);
 #endif
     }
@@ -231,17 +299,59 @@ int main(int argc, char *argv[])
     si.get_config("tdelta",&datalink_tdelta,"Time offset for packets");
     si.get_config("packet-buffer-timeout", &packet_buffer_timeout, "Time in milliseconds between each callback from libpcap");
 
+    feature_file_names_t feature_file_names;
+    be13::plugin::get_scanner_feature_file_names(feature_file_names);
+    feature_recorder_set fs(feature_recorder_set::NO_ALERT,be_hash,device.c_str(),demux.outdir);
+    fs.init(feature_file_names);
+    the_fs   = &fs;
+    demux.fs = &fs;
+
 	/* live capture */
     int exit_val = 0;
 
 	demux.start_new_connections = true;
-    int err = process_infile(demux,"port 19000",device,"");
+    int err = process_infile(demux, expression, device, "");
     if (err < 0) {
         exit_val = 1;
     }
 
+    DEBUG(10) ("process_infile stopped with code: %d", err); 
+
     demux.remove_all_flows();	// empty the map to capture the state
-    // be13::plugin::phase_shutdown(*the_fs);
+    be13::plugin::phase_shutdown(*the_fs);
 
     exit(exit_val);
 }
+
+int main() {
+    gg_error err = GGE_SUCCESS;
+
+    err = gg_global_init(0);
+    if(err) {
+        gg_log(GG_LOG_ERROR, "gg_global_init failed %d", err);
+        return -1;
+    }
+
+    gg_runtime_start(handler, GG_RT_OPT_ASYNC);
+
+	const char* device = std::getenv("DEVICE");
+	const char* expression = std::getenv("EXPRESSION");
+    const std::string device_str(device);
+    const std::string expression_str(expression);
+
+    tcpflow(device_str, expression_str);
+
+    return -1;
+}
+
+
+/* for debugging purposes:
+int main() {
+    const char* device = std::getenv("DEVICE");
+	const char* expression = std::getenv("EXPRESSION");
+    const std::string device_str(device);
+    const std::string expression_str(expression);
+
+    tcpflow(device_str, expression_str);
+}
+*/
