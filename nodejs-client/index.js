@@ -25,8 +25,8 @@ function bin2String(array) {
     console.log("Subscriber connected to port 5678");
 
     for await (const [msg] of sock) {
-        const msg_decoded = msgpack.decode(msg);
-        console.log("data:" + msg_decoded.data);
+        const msg_decoded = msgpack.decode(msg);    
+        console.log("data:" + msg_decoded.data);    // [...msg_decoded.data] to get the byte array
         console.log("src:" + bin2String(new Uint16Array(msg_decoded.src)));
         console.log("dst:" + bin2String(new Uint16Array(msg_decoded.dst)));
     }
