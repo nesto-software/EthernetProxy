@@ -37,3 +37,25 @@ jobs:
      # - name: Run tests
      #   run: |
      #     make check
+
+  build-tcpflow-gg:
+    runs-on: 'ubuntu-20.04'
+    needs: build-tcpflow-gg
+
+    steps:
+      - name: Rename the binary
+        working-directory: src
+        run: |
+          mv tcpflow_gg ethernetproxy-gg
+
+      - name: Create greengrass deployment package
+        working-directory: src
+        run: |
+          zip ethernetproxy-gg.zip ethernetproxy-gg
+    
+      - name: Upload Release Asset - Greengrass Deployment Package
+        uses: actions/upload-artifact@v2
+        with:
+          name: greengrass-deployment-package
+          path: |
+            src/ethernetproxy-gg.zip
