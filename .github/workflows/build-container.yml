@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.devcontainer/**'
+      - '.github/workflows/*'
     branches: master
   workflow_dispatch:
 
