@@ -51,11 +51,6 @@ jobs:
      #   run: |
      #     make check
 
-  upload-artifact-tcpflow-gg:
-    runs-on: 'ubuntu-20.04'
-    needs: build-tcpflow-gg
-
-    steps:
       - name: Rename the binary
         working-directory: src
         run: |
