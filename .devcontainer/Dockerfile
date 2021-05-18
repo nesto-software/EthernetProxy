@@ -16,7 +16,7 @@ ENV PATH="/opt/crosstool-ng/x-tools/${TOOLCHAIN}/bin:${PATH}"
 
 RUN mkdir -p "${STAGING_DIR}"
 
-RUN RUN sudo apt-get update -y
+RUN sudo apt-get update -y
 
 # zlib
 RUN git clone https://github.com/madler/zlib.git /tmp/zlib && cd /tmp/zlib && git checkout cacf7f1d4e3d44d871b605da3b647f07d718623f \
