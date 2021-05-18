@@ -38,7 +38,7 @@ jobs:
      #   run: |
      #     make check
 
-  build-tcpflow-gg:
+  upload-artifact-tcpflow-gg:
     runs-on: 'ubuntu-20.04'
     needs: build-tcpflow-gg
 
