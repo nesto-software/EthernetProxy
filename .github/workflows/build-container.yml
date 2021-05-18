@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - '.devcontainer/**'
-      - '.github/workflows/*'
+      - '.github/workflows/build-container.yml'
     branches: master
   workflow_dispatch:
 
