@@ -19,6 +19,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
 
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
       -
         name: Build and push
         id: docker_build
@@ -26,5 +31,4 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/ethernet-proxy-dev:latest
-          file: .devcontainer/Dockerfile
           context: .devcontainer
