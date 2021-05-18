@@ -5,32 +5,35 @@
 # 2020-07-03 - slg - ported to be13_api; removed python (be13_api doesn't use python)
 # 2021-02-23 - ml - changed workflow triggers
 
-name: BE13_API CI (c++14)
+name: Build tcpflow-gg
 on:
   push:
+    paths-ignore:
+      - '.devcontainer/**'
     branches: master
   workflow_dispatch:
 
 jobs:
-  build:
+  build-tcpflow-gg:
     runs-on: 'ubuntu-20.04'
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/ethernet-proxy-dev:latest
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+
     steps:
-      # https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@v2
         with:
           submodules: recursive
-
-      - name: Install C++ dependencies on Ubuntu
-        run: |
-           sudo apt install libtool autoconf automake g++ libboost-all-dev libssl-dev libpcap-dev libcairo2-dev
-           automake --help
 
       - name: Build the executable
         run: |
           bash bootstrap.sh
           ./configure && make
 
-      - name: Run tests
-        run: |
-          make check
+     # TODO: fix tests for cross-compilation and gg integration
+     # - name: Run tests
+     #   run: |
+     #     make check
