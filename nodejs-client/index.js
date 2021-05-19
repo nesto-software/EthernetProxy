@@ -29,7 +29,7 @@ function bin2String(array) {
         console.log("data:" + msg_decoded.data);    // [...msg_decoded.data] to get the byte array
         console.log("src ip:" + bin2String(new Uint16Array(msg_decoded.src)));
         console.log("dst ip:" + bin2String(new Uint16Array(msg_decoded.dst)));
-        console.log("src port:" + bin2String(new Uint16Array(msg_decoded.sport)));
-        console.log("dst port:" + bin2String(new Uint16Array(msg_decoded.dport)));
+        console.log("src port:" + msg_decoded.sport);
+        console.log("dst port:" + msg_decoded.dport);
     }
 })();
