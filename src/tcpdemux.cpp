@@ -259,7 +259,7 @@ void tcpdemux::post_process(tcpip *tcp)
                 size = fread(buffer, sizeof(char), BUFFERSIZE, filp);
 
                 if (size > 0) {
-                    send_via_zmq(buffer, size, this_flow.src.addr, this_flow.dst.addr);
+                    send_via_zmq(buffer, size, this_flow.src.addr, this_flow.dst.addr, this_flow.po);
                 }
             } while ( size > 0 );
             fclose(filp);
