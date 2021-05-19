@@ -67,3 +67,13 @@ jobs:
           name: greengrass-deployment-package
           path: |
             src/ethernetproxy-gg.zip
+
+      - name: Release via gh releases with latest tag
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: latest
+          prerelease: false
+          title: EthernetProxy - Latest Binary Release
+          files: |
+            src/ethernetproxy-gg
