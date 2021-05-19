@@ -207,13 +207,18 @@ struct ZMQ_MSG {
 	std::vector<char> data;
 	uint8_t src[16];
     uint8_t dst[16];
-	MSGPACK_DEFINE_MAP(data, src, dst);
+    uint16_t sport;
+    uint16_t dport;
+	MSGPACK_DEFINE_MAP(data, src, dst, sport, dport);
 };
 
-void send_via_zmq(char *payload, int size, const uint8_t src[], const uint8_t dst[]) {
+void send_via_zmq(char *payload, int size, const uint8_t src[], const uint8_t dst[], uint16_t sport, uint16_t dport) {
     struct ZMQ_MSG msg;
 
 	msg.data = std::vector<char>(payload, payload + size);
+    msg.sport = sport;
+    msg.dport = dport;
+
 	for(int i=0;i<16;i++) {
         msg.src[i] = src[i];
     }

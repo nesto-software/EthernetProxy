@@ -1,1 +1,1 @@
-void send_via_zmq(char *payload, int size, const uint8_t src[], const uint8_t dst[]);
+void send_via_zmq(char *payload, int size, const uint8_t src[], const uint8_t dst[], uint16_t sport, uint16_t dport);
