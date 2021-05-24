@@ -1,4 +1,4 @@
-auto ethernet-proxy
-iface ethernet-proxy inet manual
+auto eth-proxy
+iface eth-proxy inet manual
     pre-up ifconfig $IFACE up
     post-down ifconfig $IFACE down
