@@ -332,3 +332,5 @@ inline std::ostream& operator<<(std::ostream& os, const struct timeval *t)
 #endif
 
 #endif /* __TCPFLOW_H__ */
+
+int tcpflow(std::string device, std::string expression);

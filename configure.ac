@@ -90,7 +90,7 @@ if test x"${mingw}" == "xno" ; then
     fi
   done
   LDFLAGS="$LDFLAGS -Wl,--enable-new-dtags"
-  LIBS="-laws-greengrass-core-sdk-c -lzmq -lboost_filesystem"
+  LIBS="-lzmq -lboost_filesystem"
   AC_MSG_NOTICE([ CPPFLAGS = ${CPPFLAGS} ])
   AC_MSG_NOTICE([ LDFLAGS = ${LDFLAGS} ])
 fi

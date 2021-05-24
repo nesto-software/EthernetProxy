@@ -1,6 +1,6 @@
 # Programs that we compile:
 #bin_PROGRAMS = tcpflow tcpflow_gg
-bin_PROGRAMS = tcpflow_gg
+bin_PROGRAMS = tcpflow_gg tcpflow
 
 if WIFI_ENABLED
 WIFI_INCS = -I${top_srcdir}/src/wifipcap
@@ -85,29 +85,11 @@ DFXML_READER = be13_api/dfxml/src/dfxml_reader.cpp \
       be13_api/dfxml/src/hash_t.h
 
 
-# tcpflow_SOURCES = \
-# 	$(DFXML_WRITER) $(NETVIZ) $(BE13_API) $(WIFI_FILES) \
-# 	datalink.cpp flow.cpp \
-# 	tcpflow.cpp \
-# 	tcpip.h tcpip.cpp \
-# 	tcpdemux.h tcpdemux.cpp \
-# 	intrusive_list.h \
-# 	tcpflow.h util.cpp \
-# 	scan_md5.cpp \
-# 	scan_http.cpp \
-# 	scan_tcpdemux.cpp \
-# 	scan_netviz.cpp \
-# 	pcap_writer.h \
-# 	iptree.h \
-# 	http-parser/http_parser.c \
-# 	http-parser/http_parser.h \
-# 	mime_map.cpp \
-# 	mime_map.h
-
-tcpflow_gg_SOURCES = \
+tcpflow_SOURCES = \
 	$(DFXML_WRITER) $(NETVIZ) $(BE13_API) $(WIFI_FILES) \
 	datalink.cpp flow.cpp \
-	tcpflow-gg.cpp \
+	tcpflow.cpp \
+	tcpflow-base.cpp \
 	tcpip.h tcpip.cpp \
 	tcpdemux.h tcpdemux.cpp \
 	intrusive_list.h \
@@ -122,6 +104,28 @@ tcpflow_gg_SOURCES = \
 	http-parser/http_parser.h \
 	mime_map.cpp \
 	mime_map.h
+
+tcpflow_gg_SOURCES = \
+	$(DFXML_WRITER) $(NETVIZ) $(BE13_API) $(WIFI_FILES) \
+	datalink.cpp flow.cpp \
+	tcpflow-gg.cpp \
+	tcpflow-base.cpp \
+	tcpip.h tcpip.cpp \
+	tcpdemux.h tcpdemux.cpp \
+	intrusive_list.h \
+	tcpflow.h util.cpp \
+	scan_md5.cpp \
+	scan_http.cpp \
+	scan_tcpdemux.cpp \
+	scan_netviz.cpp \
+	pcap_writer.h \
+	iptree.h \
+	http-parser/http_parser.c \
+	http-parser/http_parser.h \
+	mime_map.cpp \
+	mime_map.h
+
+tcpflow_gg_LDADD = -laws-greengrass-core-sdk-c
 
 # Removed because it hasn't been updated to Python 3:
 #	scan_python.cpp
