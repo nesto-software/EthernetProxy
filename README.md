@@ -38,6 +38,7 @@ Setup
 We use the [TL-SG105E V4](https://www.tp-link.com/us/business-networking/easy-smart-switch/tl-sg105e/) for the reference design of our hardware variant. The larger [TL-SG108E V6](https://www.tp-link.com/us/business-networking/easy-smart-switch/tl-sg108e/) works as well.
 
 Make sure to use a separate ethernet port for the capturing interface (eth-proxy) and the interface with internet & LAN access (eth0).
+Since the Raspberry Pi 4B has one ethernet interface only, another one is needed. We tested the [Rankie USB Network Adapter](https://www.ijetech.com/product/usb-network-adapter-6421.html/) in this scenario and it appears to work just fine.
 <!-- Start tcpflow as follows in order to capture printer traffic over AppSocket/JetDirect: `` -->
 
 <img src=".github/imgs/setup.png">
