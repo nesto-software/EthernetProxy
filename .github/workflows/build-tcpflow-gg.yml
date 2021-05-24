@@ -44,15 +44,15 @@ jobs:
               --exec-prefix=$STAGING_DIR/usr/local \
               --prefix=${STAGING_DIR}/usr/local
 
-        - name: Build tcpflow
-          working-directory: src
-          run: |
-            make tcpflow
+      - name: Build tcpflow
+        working-directory: src
+        run: |
+          make tcpflow
 
-        - name: Build tcpflow-gg
-          working-directory: src
-          run: |
-            make tcpflow_gg
+      - name: Build tcpflow-gg
+        working-directory: src
+        run: |
+          make tcpflow_gg
 
      # TODO: fix tests for cross-compilation and gg integration
      # - name: Run tests
