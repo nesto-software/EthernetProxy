@@ -28,7 +28,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Build the executable
+      - name: Autoconf and configure
         run: |
           bash bootstrap.sh
 
@@ -44,22 +44,38 @@ jobs:
               --exec-prefix=$STAGING_DIR/usr/local \
               --prefix=${STAGING_DIR}/usr/local
 
-          make
+        - name: Build tcpflow
+          working-directory: src
+          run: |
+            make tcpflow
+
+        - name: Build tcpflow-gg
+          working-directory: src
+          run: |
+            make tcpflow_gg
 
      # TODO: fix tests for cross-compilation and gg integration
      # - name: Run tests
      #   run: |
      #     make check
 
-      - name: Rename the binary
+      - name: Rename the binaries
         working-directory: src
         run: |
           mv tcpflow_gg ethernetproxy-gg
+          mv tcpflow ethernetproxy
 
       - name: Create greengrass deployment package
         working-directory: src
         run: |
           zip ethernetproxy-gg.zip ethernetproxy-gg
+
+      - name: Upload Release Asset - Non-Greengrass Version
+        uses: actions/upload-artifact@v2
+        with:
+          name: non-greengrass-binary
+          path: |
+            src/ethernetproxy
     
       - name: Upload Release Asset - Greengrass Deployment Package
         uses: actions/upload-artifact@v2
@@ -77,3 +93,4 @@ jobs:
           title: EthernetProxy - Latest Binary Release
           files: |
             src/ethernetproxy-gg
+            src/ethernetproxy
