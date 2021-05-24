@@ -31,3 +31,13 @@ We are currently not actively developing the software variant.
 Thus, special hardware which leverages port mirroring is a prerequisite.
 
 Conceptually, the software variant could be implemented using ip forwarding in the Linux kernel, setting up some iptables rules and capturing the packets using this codebase.
+
+Setup
+-------
+
+We use the [TL-SG105E V4](https://www.tp-link.com/us/business-networking/easy-smart-switch/tl-sg105e/) for the reference design of our hardware variant. The larger [TL-SG108E V6](https://www.tp-link.com/us/business-networking/easy-smart-switch/tl-sg108e/) works as well.
+
+Make sure to use a separate ethernet port for the capturing interface (eth-proxy) and the interface with internet & LAN access (eth0).
+<!-- Start tcpflow as follows in order to capture printer traffic over AppSocket/JetDirect: `` -->
+
+<img src=".github/imgs/setup.png">
