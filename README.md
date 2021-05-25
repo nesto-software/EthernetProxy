@@ -58,8 +58,8 @@ Usage
 # 1.) make sure to name the eth-proxy interface correctly, e.g. use ./etc/systemd/network/89-nesto-external-eth.link
 # 2.) make sure to bring up the eth-proxy interface, e.g. use ./etc/network/interfaces
 
-# 3.) start the ethernet proxy binary
-DEVICE="eth-proxy" EXPRESSION="tcp and dst port 9100" ethernet-proxy
+# 3.) start the ethernet proxy binary - you must be root to open the interface in promiscuous mode
+sudo DEVICE="eth-proxy" EXPRESSION="tcp and dst port 9100" ethernet-proxy
 ```
 
 IPC Example
