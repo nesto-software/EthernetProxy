@@ -42,3 +42,11 @@ Since the Raspberry Pi 4B has one ethernet interface only, another one is needed
 <!-- Start tcpflow as follows in order to capture printer traffic over AppSocket/JetDirect: `` -->
 
 <img src=".github/imgs/setup.png">
+
+Install via GitHub Releases Download (binary)
+---------------------------------------------
+
+| Method    | Command                                                                                           |
+|:----------|:--------------------------------------------------------------------------------------------------|
+| **curl**  | `bash -c "$(curl -fsSL https://raw.githubusercontent.com/nesto-software/EthernetProxy/master/scripts/install-from-release.sh)"` |
+| **wget**  | `bash -c "$(wget -O- https://raw.githubusercontent.com/nesto-software/EthernetProxy/master/scripts/install-from-release.sh)"`   |
