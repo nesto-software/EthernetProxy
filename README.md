@@ -74,4 +74,4 @@ We provided a sample application for Node.js in the ./nodejs-client folder.
 cd nodejs-client
 npm install
 ```
-4. node ./nodejs-client/index.js
+4. `node ./nodejs-client/index.js`
