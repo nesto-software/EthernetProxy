@@ -1,5 +1,7 @@
 [Match]
 OriginalName=eth*
+
+# find out the driver for your usb to ethernet adapter using: lsusb -v
 Driver=r8152
 
 [Link]
