@@ -5,7 +5,7 @@ Ethernet Proxy for Raspberry Pi (armhf)
   <img src=".github/imgs/project_logo.png">
 </p>
 
-[![.github/workflows/build-app-release.yaml](https://github.com/nesto-software/EthernetProxy/actions/workflows/build-tcpflow-gg.yml/badge.svg)](https://github.com/nesto-software/EthernetProxy/actions/workflows/build-tcpflow-gg.yml)
+[![.github/workflows/build-tcpflow-gg.yml](https://github.com/nesto-software/EthernetProxy/actions/workflows/build-tcpflow-gg.yml/badge.svg)](https://github.com/nesto-software/EthernetProxy/actions/workflows/build-tcpflow-gg.yml)
 [![https://github.com/nesto-software/ProxySuite](https://img.shields.io/badge/part%20of-ProxySuite-blue)](https://github.com/nesto-software/ProxySuite)
 
 
