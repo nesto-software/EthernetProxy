@@ -50,3 +50,28 @@ Install via GitHub Releases Download (binary)
 |:----------|:--------------------------------------------------------------------------------------------------|
 | **curl**  | `bash -c "$(curl -fsSL https://raw.githubusercontent.com/nesto-software/EthernetProxy/master/scripts/install-from-release.sh)"` |
 | **wget**  | `bash -c "$(wget -O- https://raw.githubusercontent.com/nesto-software/EthernetProxy/master/scripts/install-from-release.sh)"`   |
+
+Usage
+-----
+
+```bash
+# 1.) make sure to name the eth-proxy interface correctly, e.g. etc/systemd/network/89-nesto-external-eth.link
+# 2.) make sure to bring up the eth-proxy interface, e.g. etc/network/interfaces
+
+# 3.) start the ethernet proxy binary
+DEVICE="eth-proxy" EXPRESSION="tcp and dst port 9100" ethernet-proxy
+```
+
+IPC Example
+-----------
+
+We provided a sample application for Node.js in the ./nodejs-client folder.
+
+1. Start ethernet-proxy as described above in the usage section
+2. Install Node.js binary from nodejs.org or via nvm.
+3. Install Node.js dependencies:
+```
+cd nodejs-client
+npm install
+```
+4. node ./nodejs-client/index.js

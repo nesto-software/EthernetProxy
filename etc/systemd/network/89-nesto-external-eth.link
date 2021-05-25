@@ -3,6 +3,6 @@ OriginalName=eth*
 Driver=r8152
 
 [Link]
-Name=ethernet-proxy
+Name=eth-proxy
 NamePolicy=
 MACAddressPolicy=persistent
