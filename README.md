@@ -46,7 +46,7 @@ Since the Raspberry Pi 4B has one ethernet interface only, another one is needed
 
 #### Port Mirroring
 You have to set up port mirroring using the [TL-SG105E's manual](https://www.tp-link.com/us/support/download/tl-sg105e/).
-The switch is reachable via *http://192.168.1.1* (user=pw=admin) by default.
+The switch is reachable via *http://192.168.0.1* (user=pw=admin) by default.
 
 Forward traffic from the POS system's port AND/OR the printer's port to the pi's eth-proxy port.
 
