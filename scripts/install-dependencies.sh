@@ -2,7 +2,7 @@
 
 # libpcap
 sudo apt-get install -y libpcap0.8=1.8.1-6
-sudo ln /usr/lib/arm-linux-gnueabihf/libpcap.so.0.8 /usr/lib/arm-linux-gnueabihf/libpcap.so.1
+sudo ln -s /usr/lib/arm-linux-gnueabihf/libpcap.so.0.8 /usr/lib/arm-linux-gnueabihf/libpcap.so.1
 
 # expecting openssl version 1.1.1d
 sudo apt install -y openssl=1.1.1d-0+deb10u6+rpt1
