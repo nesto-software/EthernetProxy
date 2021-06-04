@@ -1,4 +1,4 @@
-name: Build container
+name: build-container
 on:
   push:
     paths:
@@ -6,6 +6,10 @@ on:
       - '.github/workflows/build-container.yml'
     branches: master
   workflow_dispatch:
+
+env:
+  # used as the cross-toolchain release to be included into the image
+  TOOLCHAIN_RELEASE: rpi-5.10.y
 
 jobs:
   build-container:
@@ -30,5 +34,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/ethernet-proxy-dev:latest
+          tags: ghcr.io/${{ github.repository_owner }}/ethernet-proxy-dev:latest,ghcr.io/${{ github.repository_owner }}/ethernet-proxy-dev:${{ env.TOOLCHAIN_RELEASE }}
           context: .devcontainer
+          build-args: TOOLCHAIN_RELEASE=${{ env.TOOLCHAIN_RELEASE }}
