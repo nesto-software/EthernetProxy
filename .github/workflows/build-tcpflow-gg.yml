@@ -5,7 +5,7 @@
 # 2020-07-03 - slg - ported to be13_api; removed python (be13_api doesn't use python)
 # 2021-02-23 - ml - changed workflow triggers
 
-name: Build tcpflow-gg
+name: build-binaries
 on:
   push:
     paths-ignore:
